@@ -3,110 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Content Studio</title>
+  <title>IZI Safety Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #0d0d0d;
-      --surface: #161616;
-      --surface2: #1e1e1e;
-      --border: rgba(255,255,255,0.07);
-      --accent: #e8ff57;
-      --text: #f0ede6;
-      --muted: #888;
-      --font-d: 'Syne', sans-serif;
-      --font-b: 'DM Sans', sans-serif;
+      --navy:    #1e3a6e;
+      --navy2:   #2d4f8e;
+      --bg:      #f4f6fa;
+      --surface: #ffffff;
+      --surface2:#eef1f7;
+      --border:  rgba(30,58,110,0.12);
+      --text:    #1a2740;
+      --muted:   #6b7a99;
+      --font-d:  'Syne', sans-serif;
+      --font-b:  'DM Sans', sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); color: var(--text); font-family: var(--font-b); min-height: 100vh; }
 
-    /* HEADER */
-    header {
-      padding: 1.5rem 2rem 1rem;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-    }
-    header h1 { font-family: var(--font-d); font-size: 24px; font-weight: 800; }
-    header h1 span { color: var(--accent); }
-    header p { font-size: 13px; color: var(--muted); margin-top: 3px; font-weight: 300; }
+    header { background: var(--navy); padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .header-brand { display: flex; align-items: center; gap: 14px; }
+    .brand-icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-family: var(--font-d); font-size: 14px; font-weight: 800; color: #fff; }
+    .header-text h1 { font-family: var(--font-d); font-size: 20px; font-weight: 800; color: #fff; }
+    .header-text p { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 2px; }
 
-    .stats-bar { display: flex; gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
-    .stat { background: var(--surface); padding: 8px 16px; text-align: center; }
-    .stat-num { font-family: var(--font-d); font-size: 20px; font-weight: 700; line-height: 1; }
-    .stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stats-bar { display: flex; gap: 1px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); }
+    .stat { background: rgba(255,255,255,0.1); padding: 8px 16px; text-align: center; }
+    .stat-num { font-family: var(--font-d); font-size: 18px; font-weight: 700; color: #fff; line-height: 1; }
+    .stat-label { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* TABS */
-    .tabs-bar { display: flex; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+    .tabs-bar { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; padding: 0 2rem; }
     .tabs-bar::-webkit-scrollbar { display: none; }
-    .tab {
-      font-family: var(--font-d); font-size: 12px; font-weight: 700;
-      padding: 14px 20px; border: none; background: transparent; color: var(--muted);
-      cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent;
-      transition: all 0.15s; display: flex; align-items: center; gap: 8px;
-      position: relative; top: 1px;
-    }
-    .tab:hover { color: var(--text); }
-    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab { font-family: var(--font-d); font-size: 12px; font-weight: 700; padding: 14px 18px; border: none; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.15s; display: flex; align-items: center; gap: 8px; position: relative; top: 1px; }
+    .tab:hover { color: var(--navy); }
+    .tab.active { color: var(--navy); border-bottom-color: var(--navy); }
     .tab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .tab-count { font-size: 10px; padding: 2px 6px; border-radius: 8px; background: rgba(255,255,255,0.07); color: var(--muted); }
-    .tab.active .tab-count { background: rgba(232,255,87,0.15); color: var(--accent); }
+    .tab-count { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: var(--surface2); color: var(--muted); }
+    .tab.active .tab-count { background: rgba(30,58,110,0.1); color: var(--navy); }
 
-    /* STATUS FILTERS */
-    .toolbar { display: flex; align-items: center; gap: 8px; padding: 12px 2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-    .sf {
-      font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 20px;
-      border: 1px solid var(--border); background: transparent; color: var(--muted);
-      cursor: pointer; transition: all 0.15s;
-    }
-    .sf:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-    .sf.active { background: var(--surface2); color: var(--text); border-color: rgba(255,255,255,0.25); }
+    .toolbar { display: flex; align-items: center; gap: 8px; padding: 12px 2rem; border-bottom: 1px solid var(--border); background: var(--surface); flex-wrap: wrap; }
+    .sf { font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .sf:hover { color: var(--navy); border-color: rgba(30,58,110,0.3); }
+    .sf.active { background: var(--navy); color: #fff; border-color: var(--navy); }
 
-    /* GRID */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); }
-    .card { background: var(--surface); padding: 1.25rem; transition: background 0.12s; }
-    .card:hover { background: var(--surface2); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; padding: 1.5rem 2rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; transition: box-shadow 0.15s, transform 0.15s; }
+    .card:hover { box-shadow: 0 4px 20px rgba(30,58,110,0.1); transform: translateY(-1px); }
 
     .card-type { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-    .card-title { font-family: var(--font-d); font-size: 15px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
-    .card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .card-title { font-family: var(--font-d); font-size: 15px; font-weight: 700; line-height: 1.35; margin-bottom: 12px; color: var(--text); }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .card-date { font-size: 11px; color: var(--muted); }
 
     .pill { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 12px; }
-    .s-idea      { background: rgba(136,136,136,0.15); color: #888; }
-    .s-script    { background: rgba(255,107,53,0.15);  color: #ff6b35; }
-    .s-review    { background: rgba(255,200,40,0.15);  color: #ffc828; }
-    .s-published { background: rgba(232,255,87,0.2);   color: #c8e000; }
+    .s-idea      { background: #f0f2f7; color: #6b7a99; }
+    .s-script    { background: #fff3ee; color: #d4580a; }
+    .s-review    { background: #fffbee; color: #b08a00; }
+    .s-published { background: #eef7ee; color: #2a7a2a; }
 
-    .progress-bar { height: 2px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; margin-bottom: 14px; }
-    .progress-fill { height: 100%; border-radius: 2px; }
+    .progress-bar { height: 3px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
+    .progress-fill { height: 100%; border-radius: 3px; }
 
     .card-links { display: flex; gap: 8px; flex-wrap: wrap; }
-    .link-btn {
-      font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 8px;
-      border: 1px solid var(--border); background: transparent; color: var(--muted);
-      text-decoration: none; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px;
-    }
-    .link-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
-    .link-btn.video { border-color: rgba(232,255,87,0.3); color: var(--accent); }
-    .link-btn.video:hover { background: rgba(232,255,87,0.08); }
-    .link-btn.story { border-color: rgba(100,160,255,0.3); color: #64a0ff; }
-    .link-btn.story:hover { background: rgba(100,160,255,0.08); }
+    .link-btn { font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); background: transparent; text-decoration: none; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
+    .link-btn.video { border-color: rgba(30,58,110,0.25); color: var(--navy); background: rgba(30,58,110,0.04); }
+    .link-btn.video:hover { background: rgba(30,58,110,0.1); }
+    .link-btn.story { border-color: rgba(45,79,142,0.25); color: var(--navy2); background: rgba(45,79,142,0.04); }
+    .link-btn.story:hover { background: rgba(45,79,142,0.1); }
 
     .empty { grid-column: 1/-1; text-align: center; padding: 5rem 1rem; color: var(--muted); }
     .empty strong { display: block; font-family: var(--font-d); font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-
     .loader { text-align: center; padding: 4rem; color: var(--muted); font-size: 14px; }
 
-    footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 2rem; }
+    footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); background: var(--surface); margin-top: 1rem; }
   </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>Content <span>Studio</span></h1>
-    <p>Suivez toutes les vidéos en cours de production</p>
+  <div class="header-brand">
+    <div class="brand-icon">IZI</div>
+    <div class="header-text">
+      <h1>IZI Safety Studio</h1>
+      <p>Suivi de production des vidéos</p>
+    </div>
   </div>
   <div class="stats-bar" id="stats"></div>
 </header>
@@ -125,27 +106,22 @@
   <div class="loader">Chargement des vidéos…</div>
 </main>
 
-<footer>Content Studio &mdash; Vue publique &mdash; Lecture seule</footer>
+<footer>IZI Safety Studio &mdash; Vue publique &mdash; Lecture seule</footer>
 
 <script>
-  // ─── SUPABASE CONFIG ───────────────────────────────────────────────────────
-  const SUPABASE_URL = 'https://fbxnriidaiyoxgygoipf.supabase.co';
+  const SUPABASE_URL      = 'https://fbxnriidaiyoxgygoipf.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_5QPdGaRabkY_zTdUvlPoVw_65BA1yzz';
-  // ──────────────────────────────────────────────────────────────────────────
 
   const TABS = [
-    { key: 'tutorial-platform',  label: 'Tutorial platform',  color: '#e8ff57' },
-    { key: 'tutorial-mobile',    label: 'Tutorial mobile app',color: '#ff6b35' },
-    { key: 'short-mobile',       label: 'Short mobile app',   color: '#64a0ff' },
-    { key: 'other',              label: 'Other',              color: '#a264ff' },
+    { key: 'tutorial-platform', label: 'Tutorial platform',  color: '#1e3a6e' },
+    { key: 'tutorial-mobile',   label: 'Tutorial mobile app',color: '#2d4f8e' },
+    { key: 'short-mobile',      label: 'Short mobile app',   color: '#4a72b8' },
+    { key: 'other',             label: 'Other',              color: '#6b7a99' },
   ];
+  const STATUS_PROGRESS = { idea:10, script:45, review:80, published:100 };
+  const STATUS_LABEL    = { idea:'Idea', script:'Script & editing', review:'Review', published:'Published' };
 
-  const STATUS_PROGRESS = { idea: 10, script: 45, review: 80, published: 100 };
-  const STATUS_LABEL    = { idea: 'Idea', script: 'Script & editing', review: 'Review', published: 'Published' };
-
-  let videos = [];
-  let activeTab = TABS[0].key;
-  let activeStatus = 'all';
+  let videos = [], activeTab = TABS[0].key, activeStatus = 'all';
 
   async function fetchVideos() {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/videos?select=*&order=created_at.desc`, {
@@ -156,10 +132,7 @@
   }
 
   function filtered() {
-    return videos.filter(v =>
-      v.category === activeTab &&
-      (activeStatus === 'all' || v.status === activeStatus)
-    );
+    return videos.filter(v => v.category === activeTab && (activeStatus === 'all' || v.status === activeStatus));
   }
 
   function renderStats() {
@@ -169,47 +142,39 @@
     const plan  = videos.filter(v => v.status === 'idea').length;
     document.getElementById('stats').innerHTML = `
       <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div>
-      <div class="stat"><div class="stat-num" style="color:var(--accent)">${live}</div><div class="stat-label">Live</div></div>
-      <div class="stat"><div class="stat-num" style="color:#ff6b35">${prod}</div><div class="stat-label">En prod</div></div>
-      <div class="stat"><div class="stat-num" style="color:#888">${plan}</div><div class="stat-label">Planifié</div></div>
-    `;
+      <div class="stat"><div class="stat-num">${live}</div><div class="stat-label">Live</div></div>
+      <div class="stat"><div class="stat-num">${prod}</div><div class="stat-label">En prod</div></div>
+      <div class="stat"><div class="stat-num">${plan}</div><div class="stat-label">Planifié</div></div>`;
   }
 
   function renderTabs() {
     document.getElementById('tabs').innerHTML = TABS.map(t => {
       const count = videos.filter(v => v.category === t.key).length;
-      return `<button class="tab${t.key === activeTab ? ' active' : ''}" data-tab="${t.key}">
-        <span class="tab-dot" style="background:${t.color}"></span>
-        ${t.label}
-        <span class="tab-count">${count}</span>
-      </button>`;
+      return `<button class="tab${t.key===activeTab?' active':''}" data-tab="${t.key}">
+        <span class="tab-dot" style="background:${t.color}"></span>${t.label}
+        <span class="tab-count">${count}</span></button>`;
     }).join('');
-    document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
-      activeTab = b.dataset.tab; render();
-    }));
+    document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { activeTab = b.dataset.tab; render(); }));
   }
 
   function renderGrid() {
     const list = filtered();
-    const color = (TABS.find(t => t.key === activeTab) || {}).color || '#888';
+    const tabColor = (TABS.find(t => t.key === activeTab)||{}).color || '#1e3a6e';
     if (!list.length) {
       document.getElementById('grid').innerHTML = `<div class="empty"><strong>Rien ici pour l'instant</strong>Aucune vidéo dans cette catégorie.</div>`;
       return;
     }
     document.getElementById('grid').innerHTML = list.map(v => {
       const pct = STATUS_PROGRESS[v.status] || 0;
-      const dateStr = v.target_date ? new Date(v.target_date + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+      const dateStr = v.target_date ? new Date(v.target_date+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}) : '';
       const videoBtn = v.video_url ? `<a class="link-btn video" href="${v.video_url}" target="_blank" rel="noopener">▶ Regarder</a>` : '';
       const storyBtn = v.storyboard_url ? `<a class="link-btn story" href="${v.storyboard_url}" target="_blank" rel="noopener">📄 Storyboard</a>` : '';
       return `<div class="card">
-        <div class="card-type"><span class="tab-dot" style="background:${color}"></span><span style="color:${color}">${TABS.find(t=>t.key===v.category)?.label || v.category}</span></div>
+        <div class="card-type"><span class="tab-dot" style="background:${tabColor}"></span><span style="color:${tabColor}">${TABS.find(t=>t.key===v.category)?.label||v.category}</span></div>
         <div class="card-title">${v.title}</div>
-        <div class="card-meta">
-          <span class="pill s-${v.status}">${STATUS_LABEL[v.status] || v.status}</span>
-          <span class="card-date">${dateStr}</span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div>
-        ${(videoBtn || storyBtn) ? `<div class="card-links">${videoBtn}${storyBtn}</div>` : ''}
+        <div class="card-meta"><span class="pill s-${v.status}">${STATUS_LABEL[v.status]||v.status}</span><span class="card-date">${dateStr}</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${tabColor}"></div></div>
+        ${(videoBtn||storyBtn)?`<div class="card-links">${videoBtn}${storyBtn}</div>`:''}
       </div>`;
     }).join('');
   }
@@ -225,7 +190,6 @@
     renderGrid();
   });
 
-  // Realtime updates via polling every 30s
   fetchVideos();
   setInterval(fetchVideos, 30000);
 </script>
