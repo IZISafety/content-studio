@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Content Studio — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0d0d; --surface: #161616; --surface2: #1e1e1e;
+      --border: rgba(255,255,255,0.07); --accent: #e8ff57;
+      --accent2: #ff6b35; --text: #f0ede6; --muted: #888;
+      --font-d: 'Syne', sans-serif; --font-b: 'DM Sans', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-b); min-height: 100vh; }
+
+    /* LOGIN */
+    #login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
+    }
+    .login-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 2.5rem; width: 100%; max-width: 360px; text-align: center;
+    }
+    .login-box h1 { font-family: var(--font-d); font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .login-box h1 span { color: var(--accent); }
+    .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 2rem; }
+    .login-box input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: var(--font-b);
+      font-size: 14px; padding: 12px 14px; outline: none; margin-bottom: 12px;
+      transition: border-color 0.15s;
+    }
+    .login-box input:focus { border-color: var(--accent); }
+    .login-btn {
+      width: 100%; font-family: var(--font-d); font-size: 14px; font-weight: 700;
+      padding: 12px; border-radius: 10px; border: none; background: var(--accent);
+      color: #0d0d0d; cursor: pointer; transition: opacity 0.15s;
+    }
+    .login-btn:hover { opacity: 0.85; }
+    .login-error { font-size: 12px; color: #ff5050; margin-top: 10px; display: none; }
+
+    /* APP */
+    #app-screen { display: none; }
+
+    header {
+      padding: 1.25rem 2rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    header h1 { font-family: var(--font-d); font-size: 22px; font-weight: 800; }
+    header h1 span { color: var(--accent); }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .badge-admin { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 8px; background: rgba(232,255,87,0.15); color: var(--accent); letter-spacing: 0.5px; }
+    .logout-btn { font-size: 12px; color: var(--muted); background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 5px 12px; cursor: pointer; font-family: var(--font-b); transition: all 0.15s; }
+    .logout-btn:hover { color: var(--text); }
+
+    .stats-bar { display: flex; gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    .stat { background: var(--surface); padding: 8px 14px; text-align: center; }
+    .stat-num { font-family: var(--font-d); font-size: 18px; font-weight: 700; line-height: 1; }
+    .stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* TABS */
+    .tabs-bar { display: flex; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+    .tab { font-family: var(--font-d); font-size: 12px; font-weight: 700; padding: 13px 18px; border: none; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.15s; display: flex; align-items: center; gap: 7px; position: relative; top: 1px; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .tab-count { font-size: 10px; padding: 2px 6px; border-radius: 8px; background: rgba(255,255,255,0.07); color: var(--muted); }
+    .tab.active .tab-count { background: rgba(232,255,87,0.15); color: var(--accent); }
+
+    /* TOOLBAR */
+    .toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .sf { font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+    .sf:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .sf.active { background: var(--surface2); color: var(--text); border-color: rgba(255,255,255,0.25); }
+    .add-btn { font-family: var(--font-d); font-size: 12px; font-weight: 700; padding: 7px 16px; border-radius: 8px; border: none; background: var(--accent); color: #0d0d0d; cursor: pointer; transition: opacity 0.15s; }
+    .add-btn:hover { opacity: 0.85; }
+
+    /* GRID */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: var(--border); }
+    .card { background: var(--surface); padding: 1.25rem; cursor: pointer; transition: background 0.12s; }
+    .card:hover { background: var(--surface2); }
+
+    .card-type { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .card-title { font-family: var(--font-d); font-size: 14px; font-weight: 700; line-height: 1.3; margin-bottom: 10px; }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .card-date { font-size: 11px; color: var(--muted); }
+    .pill { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 12px; }
+    .s-idea      { background: rgba(136,136,136,0.15); color: #888; }
+    .s-script    { background: rgba(255,107,53,0.15);  color: #ff6b35; }
+    .s-review    { background: rgba(255,200,40,0.15);  color: #ffc828; }
+    .s-published { background: rgba(232,255,87,0.2);   color: #c8e000; }
+    .progress-bar { height: 2px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; margin-bottom: 12px; }
+    .progress-fill { height: 100%; border-radius: 2px; }
+
+    .card-links { display: flex; gap: 6px; flex-wrap: wrap; }
+    .link-tag { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 500; }
+    .link-tag.has-video { background: rgba(232,255,87,0.1); color: var(--accent); }
+    .link-tag.has-story { background: rgba(100,160,255,0.1); color: #64a0ff; }
+
+    .empty { grid-column: 1/-1; text-align: center; padding: 5rem 1rem; color: var(--muted); }
+    .empty strong { display: block; font-family: var(--font-d); font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+
+    .loader { text-align: center; padding: 4rem; color: var(--muted); font-size: 14px; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: flex-start; justify-content: center; padding: 2rem 1rem; z-index: 100; overflow-y: auto; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; width: 100%; max-width: 440px; margin: auto; }
+    .modal h2 { font-family: var(--font-d); font-size: 18px; font-weight: 800; margin-bottom: 1.5rem; }
+
+    .form-row { margin-bottom: 16px; }
+    .form-row label { display: block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 6px; }
+    .form-row input, .form-row select, .form-row textarea {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: var(--font-b);
+      font-size: 13px; padding: 10px 12px; outline: none; transition: border-color 0.15s;
+    }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--accent); }
+    .form-row select option { background: #1e1e1e; }
+    .form-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .form-actions { display: flex; gap: 8px; margin-top: 1.5rem; }
+    .btn-save { flex: 1; font-family: var(--font-d); font-size: 13px; font-weight: 700; padding: 11px; border-radius: 10px; border: none; background: var(--accent); color: #0d0d0d; cursor: pointer; }
+    .btn-cancel { font-family: var(--font-b); font-size: 13px; padding: 11px 16px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; }
+    .btn-delete { font-family: var(--font-b); font-size: 13px; padding: 11px 16px; border-radius: 10px; border: 1px solid rgba(255,80,80,0.25); background: transparent; color: #ff5050; cursor: pointer; }
+
+    .saving { opacity: 0.6; pointer-events: none; }
+    footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 2rem; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>Content <span>Studio</span></h1>
+    <p>Accès administrateur</p>
+    <input type="password" id="pwd-input" placeholder="Mot de passe" />
+    <button class="login-btn" id="login-btn">Connexion</button>
+    <div class="login-error" id="login-error">Mot de passe incorrect.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+  <header>
+    <div>
+      <h1>Content <span>Studio</span> <span class="badge-admin">ADMIN</span></h1>
+    </div>
+    <div class="header-right">
+      <div class="stats-bar" id="stats"></div>
+      <button class="logout-btn" id="logout-btn">Déconnexion</button>
+    </div>
+  </header>
+
+  <nav class="tabs-bar" id="tabs"></nav>
+
+  <div class="toolbar">
+    <button class="sf active" data-s="all">All statuses</button>
+    <button class="sf" data-s="idea">Idea</button>
+    <button class="sf" data-s="script">Script &amp; editing</button>
+    <button class="sf" data-s="review">Review</button>
+    <button class="sf" data-s="published">Published</button>
+    <button class="add-btn" id="add-btn">+ Add video</button>
+  </div>
+
+  <main class="grid" id="grid">
+    <div class="loader">Chargement…</div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h2 id="modal-title">New video</h2>
+      <div class="form-row">
+        <label>Title *</label>
+        <input type="text" id="f-title" placeholder="Titre de la vidéo"/>
+      </div>
+      <div class="form-row">
+        <label>Category *</label>
+        <select id="f-category">
+          <option value="tutorial-platform">Tutorial platform</option>
+          <option value="tutorial-mobile">Tutorial mobile app</option>
+          <option value="short-mobile">Short mobile app</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Status *</label>
+        <select id="f-status">
+          <option value="idea">💡 Idea</option>
+          <option value="script">✍️ Script &amp; editing</option>
+          <option value="review">👁 Review</option>
+          <option value="published">✅ Published</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Target date</label>
+        <input type="date" id="f-date"/>
+      </div>
+      <div class="form-row">
+        <label>Lien vidéo (Google Drive)</label>
+        <input type="url" id="f-video" placeholder="https://drive.google.com/…"/>
+        <div class="form-hint">Lien de partage direct vers le fichier mp4</div>
+      </div>
+      <div class="form-row">
+        <label>Storyboard (Google Doc)</label>
+        <input type="url" id="f-story" placeholder="https://docs.google.com/…"/>
+        <div class="form-hint">Lien vers le Google Doc du storyboard</div>
+      </div>
+      <div class="form-row">
+        <label>Notes internes</label>
+        <textarea id="f-notes" rows="3" placeholder="Notes visibles uniquement par l'admin…"></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" id="btn-cancel">Annuler</button>
+        <button class="btn-delete" id="btn-delete" style="display:none">Supprimer</button>
+        <button class="btn-save" id="btn-save">Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>Content Studio — Vue Admin</footer>
+</div>
+
+<script>
+  // ─── CONFIG ────────────────────────────────────────────────────────────────
+  const SUPABASE_URL      = 'https://fbxnriidaiyoxgygoipf.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_5QPdGaRabkY_zTdUvlPoVw_65BA1yzz';
+  const ADMIN_PASSWORD    = 'admin2024'; // ← Changer après déploiement
+  // ──────────────────────────────────────────────────────────────────────────
+
+  const TABS = [
+    { key: 'tutorial-platform', label: 'Tutorial platform',  color: '#e8ff57' },
+    { key: 'tutorial-mobile',   label: 'Tutorial mobile app',color: '#ff6b35' },
+    { key: 'short-mobile',      label: 'Short mobile app',   color: '#64a0ff' },
+    { key: 'other',             label: 'Other',              color: '#a264ff' },
+  ];
+  const STATUS_PROGRESS = { idea:10, script:45, review:80, published:100 };
+  const STATUS_LABEL    = { idea:'Idea', script:'Script & editing', review:'Review', published:'Published' };
+
+  let videos = [];
+  let activeTab = TABS[0].key;
+  let activeStatus = 'all';
+  let editingId = null;
+
+  // ─── AUTH ──────────────────────────────────────────────────────────────────
+  document.getElementById('login-btn').addEventListener('click', tryLogin);
+  document.getElementById('pwd-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+
+  function tryLogin() {
+    const val = document.getElementById('pwd-input').value;
+    if (val === ADMIN_PASSWORD) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+      fetchVideos();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  }
+
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('pwd-input').value = '';
+  });
+
+  // ─── DATA ──────────────────────────────────────────────────────────────────
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+
+  async function fetchVideos() {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/videos?select=*&order=created_at.desc`, { headers });
+    videos = await res.json();
+    render();
+  }
+
+  async function saveVideo(payload, id) {
+    if (id) {
+      await fetch(`${SUPABASE_URL}/rest/v1/videos?id=eq.${id}`, { method: 'PATCH', headers, body: JSON.stringify(payload) });
+    } else {
+      await fetch(`${SUPABASE_URL}/rest/v1/videos`, { method: 'POST', headers, body: JSON.stringify(payload) });
+    }
+    await fetchVideos();
+  }
+
+  async function deleteVideo(id) {
+    await fetch(`${SUPABASE_URL}/rest/v1/videos?id=eq.${id}`, { method: 'DELETE', headers });
+    await fetchVideos();
+  }
+
+  // ─── RENDER ────────────────────────────────────────────────────────────────
+  function filtered() {
+    return videos.filter(v => v.category === activeTab && (activeStatus === 'all' || v.status === activeStatus));
+  }
+
+  function renderStats() {
+    const total = videos.length;
+    const live  = videos.filter(v => v.status === 'published').length;
+    const prod  = videos.filter(v => v.status === 'script').length;
+    const plan  = videos.filter(v => v.status === 'idea').length;
+    document.getElementById('stats').innerHTML = `
+      <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--accent)">${live}</div><div class="stat-label">Live</div></div>
+      <div class="stat"><div class="stat-num" style="color:#ff6b35">${prod}</div><div class="stat-label">En prod</div></div>
+      <div class="stat"><div class="stat-num" style="color:#888">${plan}</div><div class="stat-label">Planifié</div></div>`;
+  }
+
+  function renderTabs() {
+    document.getElementById('tabs').innerHTML = TABS.map(t => {
+      const count = videos.filter(v => v.category === t.key).length;
+      return `<button class="tab${t.key===activeTab?' active':''}" data-tab="${t.key}">
+        <span class="tab-dot" style="background:${t.color}"></span>${t.label}
+        <span class="tab-count">${count}</span></button>`;
+    }).join('');
+    document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { activeTab = b.dataset.tab; render(); }));
+  }
+
+  function renderGrid() {
+    const list = filtered();
+    const color = (TABS.find(t => t.key === activeTab)||{}).color || '#888';
+    if (!list.length) {
+      document.getElementById('grid').innerHTML = `<div class="empty"><strong>Aucune vidéo ici</strong>Cliquez sur "+ Add video" pour commencer.</div>`;
+      return;
+    }
+    document.getElementById('grid').innerHTML = list.map(v => {
+      const pct = STATUS_PROGRESS[v.status] || 0;
+      const dateStr = v.target_date ? new Date(v.target_date+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) : '';
+      const links = [
+        v.video_url   ? `<span class="link-tag has-video">▶ Vidéo</span>` : '',
+        v.storyboard_url ? `<span class="link-tag has-story">📄 Storyboard</span>` : ''
+      ].join('');
+      return `<div class="card" data-id="${v.id}">
+        <div class="card-type"><span class="tab-dot" style="background:${color}"></span><span style="color:${color}">${TABS.find(t=>t.key===v.category)?.label||v.category}</span></div>
+        <div class="card-title">${v.title}</div>
+        <div class="card-meta"><span class="pill s-${v.status}">${STATUS_LABEL[v.status]||v.status}</span><span class="card-date">${dateStr}</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div>
+        ${links ? `<div class="card-links">${links}</div>` : ''}
+      </div>`;
+    }).join('');
+    document.querySelectorAll('.card').forEach(el => el.addEventListener('click', () => openModal(el.dataset.id)));
+  }
+
+  function render() { renderStats(); renderTabs(); renderGrid(); }
+
+  // ─── TOOLBAR ──────────────────────────────────────────────────────────────
+  document.querySelector('.toolbar').addEventListener('click', e => {
+    const btn = e.target.closest('.sf');
+    if (!btn) return;
+    document.querySelectorAll('.sf').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeStatus = btn.dataset.s;
+    renderGrid();
+  });
+
+  // ─── MODAL ────────────────────────────────────────────────────────────────
+  function openModal(id=null) {
+    editingId = id;
+    const v = id ? videos.find(x => x.id == id) : null;
+    document.getElementById('modal-title').textContent = v ? 'Edit video' : 'New video';
+    document.getElementById('f-title').value    = v?.title        || '';
+    document.getElementById('f-category').value = v?.category     || activeTab;
+    document.getElementById('f-status').value   = v?.status       || 'idea';
+    document.getElementById('f-date').value     = v?.target_date  || '';
+    document.getElementById('f-video').value    = v?.video_url    || '';
+    document.getElementById('f-story').value    = v?.storyboard_url || '';
+    document.getElementById('f-notes').value    = v?.notes        || '';
+    document.getElementById('btn-delete').style.display = v ? 'block' : 'none';
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); editingId = null; }
+
+  document.getElementById('add-btn').addEventListener('click', () => openModal());
+  document.getElementById('btn-cancel').addEventListener('click', closeModal);
+  document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+  document.getElementById('btn-save').addEventListener('click', async () => {
+    const title = document.getElementById('f-title').value.trim();
+    if (!title) { document.getElementById('f-title').style.borderColor='#ff5050'; return; }
+    document.getElementById('f-title').style.borderColor='';
+    const btn = document.getElementById('btn-save');
+    btn.textContent = 'Saving…'; btn.classList.add('saving');
+    const payload = {
+      title,
+      category:      document.getElementById('f-category').value,
+      status:        document.getElementById('f-status').value,
+      target_date:   document.getElementById('f-date').value || null,
+      video_url:     document.getElementById('f-video').value.trim() || null,
+      storyboard_url:document.getElementById('f-story').value.trim() || null,
+      notes:         document.getElementById('f-notes').value.trim() || null,
+    };
+    await saveVideo(payload, editingId);
+    btn.textContent = 'Sauvegarder'; btn.classList.remove('saving');
+    closeModal();
+  });
+
+  document.getElementById('btn-delete').addEventListener('click', async () => {
+    if (!editingId) return;
+    if (!confirm('Supprimer cette vidéo ?')) return;
+    await deleteVideo(editingId);
+    closeModal();
+  });
+
+  // Refresh every 60s
+  setInterval(fetchVideos, 60000);
+</script>
+</body>
+</html>
